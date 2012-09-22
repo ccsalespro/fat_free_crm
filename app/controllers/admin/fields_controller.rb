@@ -18,7 +18,7 @@
 class Admin::FieldsController < Admin::ApplicationController
   before_filter "set_current_tab('admin/fields')", :only => [ :index ]
 
-  load_resource
+  load_resource :except => :create
 
   # GET /fields
   # GET /fields.xml                                                      HTML
@@ -58,8 +58,12 @@ class Admin::FieldsController < Admin::ApplicationController
   # POST /fields.xml                                                     AJAX
   #----------------------------------------------------------------------------
   def create
-    @field = CustomField.create(params[:field])
-
+    if (params[:field][:as] =~ /pair/)
+      @field = CustomFieldPair.create_pair(params).first
+    else
+      @field = CustomField.create(params[:field])
+    end
+    
     respond_with(@field)
   end
 
@@ -67,8 +71,12 @@ class Admin::FieldsController < Admin::ApplicationController
   # PUT /fields/1.xml                                                    AJAX
   #----------------------------------------------------------------------------
   def update
-    @field = Field.find(params[:id])
-    @field.update_attributes(params[:field])
+    if (params[:field][:as] =~ /pair/)
+      @field = CustomFieldPair.update_pair(params).first
+    else
+      @field = Field.find(params[:id])
+      @field.update_attributes(params[:field])
+    end
 
     respond_with(@field)
   end
@@ -99,4 +107,5 @@ class Admin::FieldsController < Admin::ApplicationController
   # POST /fields/auto_complete/query                                     AJAX
   #----------------------------------------------------------------------------
   # Handled by before_filter :auto_complete, :only => :auto_complete
+  
 end

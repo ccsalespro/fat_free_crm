@@ -99,6 +99,8 @@ Rails.application.routes.draw do
       put  :promote
       put  :reject
     end
+    
+    get :autocomplete_account_name, :on => :collection
   end
 
   resources :opportunities, :id => /\d+/ do
@@ -136,10 +138,13 @@ Rails.application.routes.draw do
       get :password
       put :upload_avatar
       put :change_password
+      post :redraw
     end
   end
 
   namespace :admin do
+    resources :groups
+
     resources :users do
       collection do
         post :auto_complete

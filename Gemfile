@@ -49,14 +49,13 @@ group :development, :test do
   gem 'headless'
   unless ENV["CI"]
     gem 'ruby-debug', :platform => :mri_18
-    gem (RUBY_VERSION == "1.9.2" ? 'ruby-debug19' : 'debugger'), :platform => :mri_19
+    gem 'debugger', :platform => :mri_19
   end
   gem 'pry-rails'
 end
 
 group :test do
   gem 'capybara'
-  gem 'selenium-webdriver', '2.20.0' # If the version is higher, the error: "no such file to load -- { "frozen": { ..." is thrown.
   gem 'spork'
   gem 'database_cleaner'
   gem 'fuubar'
@@ -83,4 +82,3 @@ group :assets do
   gem 'therubyracer', :platform => :ruby  # C Ruby (MRI) or Rubinius, but NOT Windows
   gem 'uglifier',     '>= 1.0.3'
 end
-

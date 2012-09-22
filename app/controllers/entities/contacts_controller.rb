@@ -22,7 +22,8 @@ class ContactsController < EntitiesController
   # GET /contacts
   #----------------------------------------------------------------------------
   def index
-    @contacts = get_contacts(:page => params[:page])
+    @contacts = get_contacts(:page     => params[:page],
+                             :per_page => params[:per_page])
     
     respond_with @contacts do |format|
       format.xls { render :layout => 'header' }
@@ -44,7 +45,7 @@ class ContactsController < EntitiesController
   # GET /contacts/new
   #----------------------------------------------------------------------------
   def new
-    @contact.attributes = {:user => current_user, :access => Setting.default_access}
+    @contact.attributes = {:user => current_user, :access => Setting.default_access, :assigned_to => nil}
     @account = Account.new(:user => current_user)
 
     if params[:related]

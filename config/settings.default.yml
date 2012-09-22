@@ -185,7 +185,7 @@
 
 # - PaperTrail history UI
 :paper_trail_ui_enabled: false
-
+:comments_visible_on_dashboard: false
 
 # Background information
 #------------------------------------------------------------------------------
@@ -222,6 +222,7 @@
 
 :admin_tabs: [
   { :active : true,  :text : :admin_tab_users,    :url : { :controller : "admin/users"    } },
+  { :active : true,  :text : :admin_tab_groups,   :url : { :controller : "admin/groups"   } },
   { :active : false, :text : :admin_tab_fields,   :url : { :controller : "admin/fields"   } },
   { :active : false, :text : :admin_tab_tags,     :url : { :controller : "admin/tags"     } },
   { :active : false, :text : :admin_tab_settings, :url : { :controller : "admin/settings" } },

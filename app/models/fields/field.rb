@@ -23,6 +23,7 @@
 #  type           :string(255)
 #  field_group_id :integer
 #  position       :integer
+#  pair_id        :integer
 #  name           :string(64)
 #  label          :string(128)
 #  hint           :string(255)
@@ -43,6 +44,10 @@ class Field < ActiveRecord::Base
 
   belongs_to :field_group
 
+  scope :core_fields, where(:type => 'CoreField')
+  scope :custom_fields, where("type != 'CoreField'")
+  scope :without_pairs, where(:pair_id => nil)
+
   delegate :klass, :klass_name, :klass_name=, :to => :field_group
 
   KLASSES = [Campaign, Lead, Contact, Account, Opportunity]
@@ -58,7 +63,9 @@ class Field < ActiveRecord::Base
     'check_boxes' => :text,
     'boolean'     => :boolean,
     'date'        => :date,
+    'datepair'    => :date,
     'datetime'    => :timestamp,
+    'datetimepair' => :timestamp,
     'decimal'     => [:decimal, {:precision => 15, :scale => 2}],
     'integer'     => :integer,
     'float'       => :float
@@ -71,7 +78,6 @@ class Field < ActiveRecord::Base
 
   validates_presence_of :as, :message => "^Please specify a Field type."
   validates_inclusion_of :as, :in => FIELD_TYPES.keys, :message => "Invalid Field Type."
-
 
   def self.field_types
     # Expands concise FIELD_TYPES into a more usable hash
@@ -87,11 +93,10 @@ class Field < ActiveRecord::Base
   end
 
   def input_options
-    input_html = {:maxlength => attributes[:maxlength]}
-
+    input_html = {}
     attributes.reject { |k,v|
-      !%w(as collection disabled label placeholder required).include?(k) or v.blank?
-    }.symbolize_keys.merge(:input_html => input_html)
+      !%w(as collection disabled label placeholder required maxlength).include?(k) or v.blank?
+    }.symbolize_keys.merge(input_html)
   end
 
   def collection_string=(value)
@@ -110,15 +115,13 @@ class Field < ActiveRecord::Base
     when 'checkbox'
       value.to_s == '0' ? "no" : "yes"
     when 'date'
-      value && value.strftime(I18n.t("date.formats.default"))
+      value && value.strftime(I18n.t("date.formats.mmddyy"))
     when 'datetime'
-      value && value.strftime(I18n.t("time.formats.long"))
+      value && value.strftime(I18n.t("time.formats.mmddhhss"))
     when 'check_boxes'
-      value = YAML.load(value) if value.is_a?(String)
       value.select(&:present?).in_groups_of(2, false).map {|g| g.join(', ')}.join("<br />".html_safe) if Array === value
     else
       value.to_s
     end
   end
 end
-

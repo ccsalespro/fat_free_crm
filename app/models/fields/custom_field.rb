@@ -73,6 +73,15 @@ class CustomField < Field
     end
   end
 
+  # Extra validation that is called on this field when validation happens
+  # obj is reference to parent object
+  #------------------------------------------------------------------------------
+  def custom_validator(obj)
+    attr = name.to_sym
+    obj.errors.add(attr, ::I18n.t('activerecord.errors.models.custom_field.required', :field => label)) if required? and obj.send(attr).blank?
+    obj.errors.add(attr, ::I18n.t('activerecord.errors.models.custom_field.maxlength', :field => label)) if (maxlength.to_i > 0) and (obj.send(attr).to_s.length > maxlength.to_i)
+  end
+  
 protected
 
   # When changing a custom field's type, it may be necessary to
@@ -124,6 +133,7 @@ protected
     self.name = generate_column_name if name.blank?
     connection.add_column(table_name, name, column_type, column_options)
     klass.reset_column_information
+    klass.serialize_custom_fields!
   end
 
   def update_column
@@ -132,7 +142,7 @@ protected
     if self.errors.empty? && db_transition_safety(as_was) == :safe
       connection.change_column(table_name, name, column_type, column_options)
       klass.reset_column_information
+      klass.serialize_custom_fields!
     end
   end
 end
-

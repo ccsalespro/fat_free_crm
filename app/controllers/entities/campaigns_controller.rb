@@ -22,7 +22,10 @@ class CampaignsController < EntitiesController
   #----------------------------------------------------------------------------
   def index
     @campaigns = get_campaigns(:page => params[:page])
-    respond_with(@campaigns)
+    
+    respond_with @campaigns do |format|
+      format.xls { render :layout => 'header' }
+    end
   end
 
   # GET /campaigns/1
@@ -34,6 +37,25 @@ class CampaignsController < EntitiesController
         @comment = Comment.new
         @timeline = timeline(@campaign)
       end
+      
+      format.xls do
+        @leads = @campaign.leads
+        render '/leads/index', :layout => 'header'
+      end
+      
+      format.csv do
+        render :csv => @campaign.leads
+      end
+      
+      format.rss do
+        @items  = "leads"
+        @assets = @campaign.leads
+      end
+      
+      format.atom do
+        @items  = "leads"
+        @assets = @campaign.leads
+      end
     end
   end
 
@@ -42,8 +64,7 @@ class CampaignsController < EntitiesController
   # GET /campaigns/new.xml                                                 AJAX
   #----------------------------------------------------------------------------
   def new
-    @campaign.attributes = {:user => @current_user, :access => Setting.default_access}
-    @users = User.except(@current_user)
+    @campaign.attributes = {:user => current_user, :access => Setting.default_access, :assigned_to => nil}
 
     if params[:related]
       model, id = params[:related].split('_')
@@ -60,7 +81,6 @@ class CampaignsController < EntitiesController
   # GET /campaigns/1/edit                                                  AJAX
   #----------------------------------------------------------------------------
   def edit
-    @users = User.except(@current_user)
     if params[:previous].to_s =~ /(\d+)\z/
       @previous = Campaign.my.find_by_id($1) || $1.to_i
     end
@@ -71,11 +91,10 @@ class CampaignsController < EntitiesController
   # POST /campaigns
   #----------------------------------------------------------------------------
   def create
-    @users = User.except(@current_user)
     @comment_body = params[:comment_body]
 
     respond_with(@campaign) do |format|
-      if @campaign.save_with_permissions(params[:users])
+      if @campaign.save
         @campaign.add_comment_by_user(@comment_body, current_user)
         @campaigns = get_campaigns
         get_data_for_sidebar
@@ -87,10 +106,10 @@ class CampaignsController < EntitiesController
   #----------------------------------------------------------------------------
   def update
     respond_with(@campaign) do |format|
-      if @campaign.update_with_permissions(params[:campaign], params[:users])
+      if @campaign.update_attributes(params[:campaign])
         get_data_for_sidebar if called_from_index_page?
       else
-        @users = User.except(@current_user) # Need it to redraw [Edit Campaign] form.
+        @users = User.except(current_user) # Need it to redraw [Edit Campaign] form.
       end
     end
   end
@@ -122,18 +141,18 @@ class CampaignsController < EntitiesController
   #----------------------------------------------------------------------------
   def options
     unless params[:cancel].true?
-      @per_page = @current_user.pref[:campaigns_per_page] || Campaign.per_page
-      @outline  = @current_user.pref[:campaigns_outline]  || Campaign.outline
-      @sort_by  = @current_user.pref[:campaigns_sort_by]  || Campaign.sort_by
+      @per_page = current_user.pref[:campaigns_per_page] || Campaign.per_page
+      @outline  = current_user.pref[:campaigns_outline]  || Campaign.outline
+      @sort_by  = current_user.pref[:campaigns_sort_by]  || Campaign.sort_by
     end
   end
 
   # POST /campaigns/redraw                                                 AJAX
   #----------------------------------------------------------------------------
   def redraw
-    @current_user.pref[:campaigns_per_page] = params[:per_page] if params[:per_page]
-    @current_user.pref[:campaigns_outline]  = params[:outline]  if params[:outline]
-    @current_user.pref[:campaigns_sort_by]  = Campaign::sort_by_map[params[:sort_by]] if params[:sort_by]
+    current_user.pref[:campaigns_per_page] = params[:per_page] if params[:per_page]
+    current_user.pref[:campaigns_outline]  = params[:outline]  if params[:outline]
+    current_user.pref[:campaigns_sort_by]  = Campaign::sort_by_map[params[:sort_by]] if params[:sort_by]
     @campaigns = get_campaigns(:page => 1)
     render :index
   end
