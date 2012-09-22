@@ -1,0 +1,28 @@
+<%= render :partial => "report_table_styles" %>
+
+<%= form_tag nil, :method => "get" do %>
+  <%= label_tag :start_date %>
+  <%= text_field_tag :start_date, @report.start_date.strftime("%m/%d/%Y") %>
+  <%= label_tag :end_date %>
+  <%= text_field_tag :end_date, @report.end_date.strftime("%m/%d/%Y") %>
+  <%= submit_tag "Change Dates" %>
+<% end %>
+
+<table class="report">
+  <caption>Lead Funnel by Status and Agent for <%= @report.start_date.strftime("%m/%d/%Y") %> to <%= @report.end_date.strftime("%m/%d/%Y") %></caption>
+  <thead>
+    <tr>
+      <% @report.header_row.each do |f| %>
+        <th><%= f %></th>
+      <% end %>
+    </tr>
+  </thead>
+  <tfoot>
+    <%= render :partial => "summary_by_status_and_agent_row", :locals => { :row => @report.footer_row } %>
+  </tfoot>
+  <tbody>
+    <% @report.body_rows.each do |row| %>
+      <%= render :partial => "summary_by_status_and_agent_row", :locals => { :row => row } %>
+    <% end %>
+  </tbody>
+</table>

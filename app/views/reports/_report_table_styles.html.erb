@@ -1,0 +1,46 @@
+<% content_for :styles do %>
+table.report {
+  border-collapse: collapse;
+}
+
+table.report caption {
+  font-weight: bold;
+  font-size: 2em;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+table.report thead {
+  border-bottom: 1px solid black;
+}
+
+table.report tfoot {
+  border-top: 1px solid black;
+}
+
+table.report tfoot td {
+  font-weight: bold;
+}
+
+table.report tbody tr:nth-child(odd) {
+  background-color: #EFEFFF;
+}
+
+table.report th, table.report td {
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+table.report thead th {
+  text-align: right;
+}
+
+table.report tbody th {
+  text-align: left;
+}
+
+table.report td {
+  font-family: monospace;
+  text-align: right;
+}
+<% end %>

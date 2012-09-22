@@ -6,6 +6,6 @@
 
   = render "admin/users/profile", :f => f
   .buttonbar
-    = f.submit t(:create_user)
+    = f.submit t(:create_user), :onclick => "crm.clear_all_hints()"
     #{t :or}
     = link_to_cancel new_admin_user_path

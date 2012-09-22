@@ -130,6 +130,8 @@ class HomeController < ApplicationController
 
   #----------------------------------------------------------------------------
   def activity_user
+    return current_user unless current_user.admin?
+
     user = current_user.pref[:activity_user]
     if user && user != "all_users"
       user = if user =~ /@/ # email
@@ -158,5 +160,4 @@ class HomeController < ApplicationController
       end
     end
   end
-
 end

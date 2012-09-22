@@ -69,6 +69,13 @@ class User < ActiveRecord::Base
   has_many    :preferences, :dependent => :destroy
   has_and_belongs_to_many :groups
 
+  has_one :business_address,
+    :dependent => :destroy,
+    :as => :addressable,
+    :class_name => "Address",
+    :conditions => "address_type='Business'"
+  accepts_nested_attributes_for :business_address, :allow_destroy => true
+
   has_paper_trail :ignore => [:last_request_at, :perishable_token]
 
   # For some reason this does not play nice with has_paper_trail when set as default scope

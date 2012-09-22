@@ -87,6 +87,11 @@ class Lead < ActiveRecord::Base
   after_create  :increment_leads_count
   after_destroy :decrement_leads_count
 
+  before_update :log_status_change
+  after_create :log_initial_status
+  
+  has_many :lead_status_changes, :dependent => :delete_all  
+
   # Default values provided through class methods.
   #----------------------------------------------------------------------------
   def self.per_page ; 20                  ; end
@@ -140,7 +145,7 @@ class Lead < ActiveRecord::Base
 
   #----------------------------------------------------------------------------
   def convert
-    update_attribute(:status, "converted")
+    update_attribute(:status, "Closed Yes")
   end
 
   #----------------------------------------------------------------------------
@@ -164,11 +169,7 @@ class Lead < ActiveRecord::Base
 
   #----------------------------------------------------------------------------
   def full_name(format = nil)
-    if format.nil? || format == "before"
-      "#{self.first_name} #{self.last_name}"
-    else
-      "#{self.last_name}, #{self.first_name}"
-    end
+    company
   end
   alias :name :full_name
 
@@ -193,4 +194,14 @@ private
   def users_for_shared_access
     errors.add(:access, :share_lead) if self[:access] == "Shared" && !self.permissions.any?
   end
+
+  def log_status_change
+    if status_changed? || assigned_to_changed?
+      lead_status_changes.create! :status => status, :assigned_to => assigned_to
+    end
+  end  
+  
+  def log_initial_status
+    lead_status_changes.create! :status => status, :assigned_to => assigned_to
+  end  
 end

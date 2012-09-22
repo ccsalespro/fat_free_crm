@@ -6,6 +6,6 @@
 
     = render "admin/users/profile", :f => f, :edit => true
     .buttonbar
-      = f.submit t(:save_user)
+      = f.submit t(:save_user), :onclick => "crm.clear_all_hints()"
       #{t :or}
       = link_to_cancel edit_admin_user_path(@user)

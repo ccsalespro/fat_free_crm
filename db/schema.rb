@@ -243,19 +243,26 @@ ActiveRecord::Schema.define(:version => 20120801032706) do
   add_index "groups_users", ["group_id"], :name => "index_groups_users_on_group_id"
   add_index "groups_users", ["user_id"], :name => "index_groups_users_on_user_id"
 
+  create_table "lead_status_changes", :force => true do |t|
+    t.integer  "lead_id",                    :null => false
+    t.integer  "assigned_to"
+    t.string   "status",      :limit => nil, :null => false
+    t.datetime "created_at",                 :null => false
+  end
+
   create_table "leads", :force => true do |t|
     t.integer  "user_id"
     t.integer  "campaign_id"
     t.integer  "assigned_to"
-    t.string   "first_name",       :limit => 64,  :default => "",       :null => false
-    t.string   "last_name",        :limit => 64,  :default => "",       :null => false
+    t.string   "first_name",       :limit => 128, :default => "",       :null => false
+    t.string   "last_name",        :limit => 128, :default => "",       :null => false
     t.string   "access",           :limit => 8,   :default => "Public"
     t.string   "title",            :limit => 64
-    t.string   "company",          :limit => 64
+    t.string   "company",          :limit => 128
     t.string   "source",           :limit => 32
     t.string   "status",           :limit => 32
     t.string   "referred_by",      :limit => 64
-    t.string   "email",            :limit => 64
+    t.string   "email",            :limit => 128
     t.string   "alt_email",        :limit => 64
     t.string   "phone",            :limit => 32
     t.string   "mobile",           :limit => 32
@@ -416,6 +423,8 @@ ActiveRecord::Schema.define(:version => 20120801032706) do
     t.boolean  "admin",                             :default => false, :null => false
     t.datetime "suspended_at"
     t.string   "single_access_token"
+    t.string   "fax"
+    t.string   "website"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email"

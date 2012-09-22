@@ -43,6 +43,17 @@
       %td
         .label #{t :company}:
         = f.text_field :company
+    %tr
+      %td
+        .label #{t :fax}:
+        = f.text_field :fax
+      %td= spacer
+      %td
+        .label #{t :website}:
+        = f.text_field :website
+    %tr
+      %td
+        = render "shared/address", :f => f, :asset => @user, :type => 'business', :title => :address
         
 .subtitle #{t :group_memberships}
 .section

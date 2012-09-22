@@ -1,0 +1,20 @@
+<%= render :partial => "report_table_styles" %>
+
+<table class="report">
+  <caption>Lead Summary by Status and Agent</caption>
+  <thead>
+    <tr>
+      <% @report.header_row.each do |f| %>
+        <th><%= f %></th>
+      <% end %>
+    </tr>
+  </thead>
+  <tfoot>
+    <%= render :partial => "summary_by_status_and_agent_row", :locals => { :row => @report.footer_row } %>
+  </tfoot>
+  <tbody>
+    <% @report.body_rows.each do |row| %>
+      <%= render :partial => "summary_by_status_and_agent_row", :locals => { :row => row } %>
+    <% end %>
+  </tbody>
+</table>

@@ -1,0 +1,8 @@
+<% if row.present? %>
+  <tr>
+    <th><%= row.first %></th>
+    <% row[1..-1].each do |field| %>
+      <td><%= field %></td>
+    <% end %>
+  </tr> 
+<% end %>

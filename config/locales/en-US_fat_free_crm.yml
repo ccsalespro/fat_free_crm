@@ -879,3 +879,18 @@ en-US:
     from_to:     From %{from} to %{to}
     from_only:   From %{from}
     to_only:     Until %{to}
+
+
+
+  cold_call: Cold Call
+  cold_walk_in: Cold Walk In
+  telemarketer_appointment: Telemarketer Appointment
+  referral: Referral
+  online_marketing: Online Marketing
+
+  obtain_statement: Obtain Statement
+  present_cost_analysis: Present Cost Analysis
+  pick_up_paperwork: Pick Up Paperwork
+  call: Call
+  email: Email
+  follow_up: Follow Up
