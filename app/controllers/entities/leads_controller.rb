@@ -217,7 +217,11 @@ class LeadsController < EntitiesController
 private
 
   #----------------------------------------------------------------------------
-  alias :get_leads :get_list_of_records
+  def get_leads(options = {})
+    scope = get_list_of_records(options)
+    scope = scope.where(assigned_to: params[:user_id]) if params[:user_id].present?
+    scope
+  end
 
   #----------------------------------------------------------------------------
   def get_campaigns

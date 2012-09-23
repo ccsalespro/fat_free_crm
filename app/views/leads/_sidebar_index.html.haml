@@ -23,5 +23,14 @@
     %ul
       %li= link_to "Summary by Status and Agent", reports_summary_by_status_and_agent_path
       %li= link_to "Funnel by Status and Agent", reports_funnel_by_status_and_agent_path
+    %div
+      = form_tag(nil, method: 'get') do
+        %div
+          %div
+            = label_tag :user_id, 'Show assigned to:'
+          %div
+            = select_tag :user_id, options_for_select([['All users', '']] + User.order('first_name, last_name, email').all.map { |u| [u.full_name, u.id] }, params[:user_id])
+        %div
+          = submit_tag 'Filter'
 
   = hook(:index_lead_sidebar_bottom, self)
