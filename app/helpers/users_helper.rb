@@ -32,26 +32,28 @@ module UsersHelper
 
   def user_select(asset, users, myself)
     user_options = user_options_for_select(users, myself)
+
+    include_blank = t(:unassigned) if myself.admin?
+
     select(asset, :assigned_to, user_options,
-           { :include_blank => t(:unassigned) },
+           { :include_blank => include_blank },
            { :style         => "width:160px"  })
   end
 
+
+
   def user_options_for_select(users, myself)
-    users.map{|u| [u.full_name, u.id]}.prepend([t(:myself), myself.id])
-  end
 
-
-  # Do not show non-admins any other users.
-  # Not necessarily the best place to wedge this in, but not too bad.
-  
-  def user_select_with_admin_filtering(asset, users, myself)
-    if myself.admin?
-      user_select_without_admin_filtering(asset, users, myself)
+    # Do not show non-admins any other users.
+    # Show group leaders members of their groups
+    # Kind of ugly, but at least a common point to wedge it in.
+    filtered_users = if myself.admin?
+      users
+    elsif myself.group_leader?
+      myself.groups.map(&:users).flatten.uniq
     else
-      select(asset, :assigned_to, [[t(:myself), myself.id]], {}, { :include_blank => t(:unassigned) })
+      []
     end
+    filtered_users.map { |u| [u.full_name, u.id] }.sort.prepend([t(:myself), myself.id])
   end
-  
-  alias_method_chain :user_select, :admin_filtering  
 end

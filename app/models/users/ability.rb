@@ -9,8 +9,17 @@ class Ability
 
       can :create, :all
       can :manage, entities, :access => 'Public'
-      can :manage, entities + [Task], :user_id => user.id
-      can :manage, entities + [Task], :assigned_to => user.id
+
+      user_ids_to_manage = [user.id]
+      if user.group_leader?
+        user.groups.each do |g|
+          user_ids_to_manage += g.user_ids
+        end
+        user_ids_to_manage.uniq!
+      end
+
+      can :manage, entities + [Task], :user_id => user_ids_to_manage
+      can :manage, entities + [Task], :assigned_to => user_ids_to_manage
       
       #
       # Due to an obscure bug (see https://github.com/ryanb/cancan/issues/213)

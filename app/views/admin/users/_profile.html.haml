@@ -24,6 +24,12 @@
           = f.check_box(:admin, { :disabled => edit && @user == current_user })
           %label{:for => 'user_admin'}
             = t(:user_is_admin)
+    %tr
+      %td(colspan=3)
+        .check_box(style="margin-top:6px")
+          = f.check_box :group_leader
+          %label{:for => 'user_group_leader'}
+            = t(:user_is_group_leader)
 .subtitle #{t :personal_information}
 .section
   %table

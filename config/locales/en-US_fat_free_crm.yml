@@ -676,6 +676,7 @@ en-US:
   user_awaits_approval: awaits your approval
   user_confirm_delete: A user can only be deleted if no related assets are left behind.
   user_is_admin: The user is Administrator
+  user_is_group_leader: The user is Group Leader
   user_never_logged_in: "hasn't logged in yet"
   user_signed_up: Signed Up
   user_signed_up_on: signed up on %{value}
